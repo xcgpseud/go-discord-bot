@@ -12,8 +12,7 @@ import (
 )
 
 var (
-	Token  string
-	Prefix string
+	Token string
 )
 
 func init() {
@@ -22,7 +21,6 @@ func init() {
 		log.Fatal("Error loading .env file.")
 	}
 	Token = os.Getenv("TOKEN")
-	Prefix = os.Getenv("PREFIX")
 }
 
 func main() {

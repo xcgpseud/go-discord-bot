@@ -1,9 +1,9 @@
 package handlers
 
 import (
-	"discord-bot/handlers/command_handlers"
 	"github.com/bwmarrin/discordgo"
 	"os"
+	"strings"
 )
 
 type Route struct {
@@ -12,27 +12,36 @@ type Route struct {
 }
 
 var routes []Route = []Route{
-	{
-		"ping",
-		command_handlers.PingHandler,
-	}, {
-		"pong",
-		command_handlers.PongHandler,
-	},
+	{"ping", PingHandler},
+	{"pong", PongHandler},
+	{"dyl", DylHandler},
 }
 
 func MessageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
-	if m.Author.ID == s.State.User.ID {
+	if m.Author.ID == s.State.User.ID || !isCommand(m.Content) {
 		return
 	}
 
-	prefix, command := GetParts(m.Content)
+	command, _ := GetCommandAndContent(m.Content)
 
-	if prefix == os.Getenv("PREFIX") {
-		for i := range routes {
-			if routes[i].Command == command {
-				routes[i].Handler(s, m)
-			}
+	for i := range routes {
+		if routes[i].Command == command {
+			routes[i].Handler(s, m)
 		}
 	}
+}
+
+func isCommand(s string) bool {
+	prefix := os.Getenv("PREFIX")
+	return len(s) > len(prefix)
+}
+
+func GetCommandAndContent(s string) (command string, content string) {
+	parts := strings.Split(s, " ")
+	command = parts[0][len(os.Getenv("PREFIX")):]
+	if len(parts) < 2 {
+		return
+	}
+	content = strings.Join(parts[1:], " ")
+	return
 }
