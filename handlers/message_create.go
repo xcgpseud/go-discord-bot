@@ -15,6 +15,7 @@ var routes []Route = []Route{
 	{"ping", PingHandler},
 	{"pong", PongHandler},
 	{"dyl", DylHandler},
+	{"flip", FlipHandler},
 }
 
 func MessageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
