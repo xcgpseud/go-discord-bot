@@ -1,6 +1,7 @@
 package main
 
 import (
+	"discord-bot/database"
 	"discord-bot/handlers"
 	"fmt"
 	"github.com/bwmarrin/discordgo"
@@ -21,6 +22,7 @@ func init() {
 		log.Fatal("Error loading .env file.")
 	}
 	Token = os.Getenv("TOKEN")
+	database.Migrate()
 }
 
 func main() {

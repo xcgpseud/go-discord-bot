@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	pester2 "discord-bot/database/repositories/pester"
 	"github.com/bwmarrin/discordgo"
 	"os"
 	"strings"
@@ -16,6 +17,7 @@ var routes []Route = []Route{
 	{"pong", PongHandler},
 	{"dyl", DylHandler},
 	{"flip", FlipHandler},
+	{"pester", PesterHandler},
 }
 
 func MessageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
@@ -30,6 +32,8 @@ func MessageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 			routes[i].Handler(s, m)
 		}
 	}
+
+	pester, err := pester2.Get()
 }
 
 func isCommand(s string) bool {
