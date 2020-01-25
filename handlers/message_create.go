@@ -2,6 +2,7 @@ package handlers
 
 import (
 	pester2 "discord-bot/database/repositories/pester"
+	"discord-bot/helpers"
 	"github.com/bwmarrin/discordgo"
 	"os"
 	"strings"
@@ -18,27 +19,34 @@ var routes []Route = []Route{
 	{"dyl", DylHandler},
 	{"flip", FlipHandler},
 	{"pester", PesterHandler},
+	{"unpester", PesterHandler},
 }
 
 func MessageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
-	if m.Author.ID == s.State.User.ID || !isCommand(m.Content) {
+	if m.Author.ID == s.State.User.ID {
 		return
 	}
 
-	command, _ := GetCommandAndContent(m.Content)
-
-	for i := range routes {
-		if routes[i].Command == command {
-			routes[i].Handler(s, m)
+	if isCommand(m.Content) {
+		command, _ := GetCommandAndContent(m.Content)
+		for i := range routes {
+			if routes[i].Command == command {
+				routes[i].Handler(s, m)
+			}
 		}
 	}
 
-	pester, err := pester2.Get()
+	pester, err := pester2.Get(m.Author.ID)
+	if err != nil {
+		return
+	}
+	_, err = s.ChannelMessageSend(m.ChannelID, pester.Message)
+	helpers.LogError(err)
 }
 
 func isCommand(s string) bool {
 	prefix := os.Getenv("PREFIX")
-	return len(s) > len(prefix)
+	return len(s) > len(prefix) && s[0:len(prefix)] == prefix
 }
 
 func GetCommandAndContent(s string) (command string, content string) {

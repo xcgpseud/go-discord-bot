@@ -2,9 +2,9 @@ package handlers
 
 import (
 	pester2 "discord-bot/database/repositories/pester"
+	"discord-bot/helpers"
 	"fmt"
 	"github.com/bwmarrin/discordgo"
-	"strconv"
 )
 
 func PesterHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
@@ -12,15 +12,22 @@ func PesterHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 	if cmd == "pester" {
 		mentions := m.Mentions
 		if len(mentions) < 1 {
-			s.ChannelMessageSend(m.ChannelID, "You must mention somebody to pester...")
+			_, _ = s.ChannelMessageSend(m.ChannelID, "You must mention somebody to pester...")
 		}
-		uidTo, _ := strconv.ParseInt(mentions[0].ID, 10, 32)
-		uidFrom, _ := strconv.ParseInt(m.Author.ID, 10, 32)
-		_, err := pester2.Create(uidFrom, uidTo, content)
+		_, err := pester2.Create(m.Author.ID, mentions[0].ID, content)
 		if err != nil {
-			s.ChannelMessageSend(m.ChannelID, "They are already being pestered.")
+			_, _ = s.ChannelMessageSend(m.ChannelID, "They are already being pestered.")
 			return
 		}
-		s.ChannelMessageSend(m.ChannelID, fmt.Sprintf("Now pestering %s", mentions[0].Username))
+		_, _ = s.ChannelMessageSend(m.ChannelID, fmt.Sprintf("Now pestering %s", mentions[0].Username))
+	}
+
+	if cmd == "unpester" {
+		mentions := m.Mentions
+		if len(mentions) < 1 {
+			_, _ = s.ChannelMessageSend(m.ChannelID, "You need to mention somebody to stop pestering.")
+		}
+		err := pester2.Delete(mentions[0].ID)
+		helpers.LogError(err)
 	}
 }

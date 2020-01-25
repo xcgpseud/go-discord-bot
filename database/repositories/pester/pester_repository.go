@@ -6,7 +6,7 @@ import (
 	"errors"
 )
 
-func Create(uidFrom, uidTo int64, msg string) (entities.Pester, error) {
+func Create(uidFrom, uidTo, msg string) (entities.Pester, error) {
 	db := database.GetDb()
 
 	var existing entities.Pester
@@ -25,13 +25,23 @@ func Create(uidFrom, uidTo int64, msg string) (entities.Pester, error) {
 	return entities.Pester{}, errors.New("entity already exists")
 }
 
-func Get(uidTo int64) (entities.Pester, error) {
+func Get(uidTo string) (entities.Pester, error) {
 	db := database.GetDb()
 
 	var pester entities.Pester
 	if db.First(&pester, "user_id_to = ?", uidTo).RecordNotFound() {
-		return pester, errors.New("Could not find user.")
+		return pester, errors.New("could not find user")
 	}
 
 	return pester, nil
+}
+
+func Delete(uidTo string) error {
+	db := database.GetDb()
+
+	var pester entities.Pester
+	if err := db.Delete(&pester, "user_id_to = ?", uidTo).Error; err != nil {
+		return err
+	}
+	return nil
 }

@@ -6,7 +6,7 @@ import (
 
 type Pester struct {
 	gorm.Model
-	UserIdFrom int64
-	UserIdTo   int64
+	UserIdFrom string
+	UserIdTo   string
 	Message    string
 }
