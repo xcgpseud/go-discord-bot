@@ -1,0 +1,4 @@
+Put main Discord in Singleton container rather than passing as param?
+Make list of commands
+Get this shit doing something useful
+Work out CI CD properly. Must be pretty simple really
