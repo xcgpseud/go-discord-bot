@@ -1,7 +1,7 @@
 package handlers
 
 import (
-	pester2 "discord-bot/database/repositories/pester"
+	"discord-bot/database/models/pester"
 	"discord-bot/helpers"
 	"fmt"
 	"github.com/bwmarrin/discordgo"
@@ -14,7 +14,7 @@ func PesterHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 		if len(mentions) < 1 {
 			_, _ = s.ChannelMessageSend(m.ChannelID, "You must mention somebody to pester...")
 		}
-		_, err := pester2.Create(m.Author.ID, mentions[0].ID, content)
+		_, err := pester.Create(m.Author.ID, mentions[0].ID, content)
 		if err != nil {
 			_, _ = s.ChannelMessageSend(m.ChannelID, "They are already being pestered.")
 			return
@@ -27,7 +27,7 @@ func PesterHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 		if len(mentions) < 1 {
 			_, _ = s.ChannelMessageSend(m.ChannelID, "You need to mention somebody to stop pestering.")
 		}
-		err := pester2.Delete(mentions[0].ID)
+		err := pester.DeleteByUidTo(mentions[0].ID)
 		helpers.LogError(err)
 	}
 }

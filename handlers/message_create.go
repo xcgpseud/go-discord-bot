@@ -1,7 +1,7 @@
 package handlers
 
 import (
-	pester2 "discord-bot/database/repositories/pester"
+	pester2 "discord-bot/database/models/pester"
 	"discord-bot/helpers"
 	"github.com/bwmarrin/discordgo"
 	"os"
@@ -36,7 +36,7 @@ func MessageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 		}
 	}
 
-	pester, err := pester2.Get(m.Author.ID)
+	pester, err := pester2.GetByUidTo(m.Author.ID)
 	if err != nil {
 		return
 	}
