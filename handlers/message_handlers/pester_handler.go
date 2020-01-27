@@ -1,4 +1,4 @@
-package handlers
+package message_handlers
 
 import (
 	"discord-bot/database/models/pester"
@@ -15,7 +15,7 @@ func PesterHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 		return
 	}
 
-	cmd, content := GetCommandAndContent(m.Content)
+	cmd, content := helpers.GetCommandAndContent(m.Content)
 	if cmd == "pester" {
 		mentions := m.Mentions
 		if len(mentions) < 1 {

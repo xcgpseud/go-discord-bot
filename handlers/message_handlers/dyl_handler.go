@@ -1,13 +1,14 @@
-package handlers
+package message_handlers
 
 import (
+	"discord-bot/helpers"
 	"fmt"
 	"github.com/bwmarrin/discordgo"
 	"strings"
 )
 
 func DylHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
-	_, subject := GetCommandAndContent(m.Content)
+	_, subject := helpers.GetCommandAndContent(m.Content)
 	mention := m.Author.Mention()
 	_, err := s.ChannelMessageSend(
 		m.ChannelID,

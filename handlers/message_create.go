@@ -2,10 +2,9 @@ package handlers
 
 import (
 	pester2 "discord-bot/database/models/pester"
+	mh "discord-bot/handlers/message_handlers"
 	"discord-bot/helpers"
 	"github.com/bwmarrin/discordgo"
-	"os"
-	"strings"
 )
 
 type Route struct {
@@ -14,12 +13,12 @@ type Route struct {
 }
 
 var routes []Route = []Route{
-	{"ping", PingHandler},
-	{"pong", PongHandler},
-	{"dyl", DylHandler},
-	{"flip", FlipHandler},
-	{"pester", PesterHandler},
-	{"unpester", PesterHandler},
+	{"ping", mh.PingHandler},
+	{"pong", mh.PongHandler},
+	{"dyl", mh.DylHandler},
+	{"flip", mh.FlipHandler},
+	{"pester", mh.PesterHandler},
+	{"unpester", mh.PesterHandler},
 }
 
 func MessageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
@@ -27,8 +26,8 @@ func MessageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 		return
 	}
 
-	if isCommand(m.Content) {
-		command, _ := GetCommandAndContent(m.Content)
+	if helpers.IsCommand(m.Content) {
+		command, _ := helpers.GetCommandAndContent(m.Content)
 		for i := range routes {
 			if routes[i].Command == command {
 				routes[i].Handler(s, m)
@@ -42,19 +41,4 @@ func MessageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 	}
 	_, err = s.ChannelMessageSend(m.ChannelID, pester.Message)
 	helpers.LogError(err)
-}
-
-func isCommand(s string) bool {
-	prefix := os.Getenv("PREFIX")
-	return len(s) > len(prefix) && s[0:len(prefix)] == prefix
-}
-
-func GetCommandAndContent(s string) (command string, content string) {
-	parts := strings.Split(s, " ")
-	command = parts[0][len(os.Getenv("PREFIX")):]
-	if len(parts) < 2 {
-		return
-	}
-	content = strings.Join(parts[1:], " ")
-	return
 }

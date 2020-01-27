@@ -21,7 +21,7 @@ func GetAdmins() (out Admins) {
 
 	bVal, err := ioutil.ReadAll(f)
 	LogError(err)
-
+	
 	err = json.Unmarshal(bVal, &out)
 	LogError(err)
 
